@@ -1,0 +1,15 @@
+{
+    "editor.fontSize": 22,
+    "editor.acceptSuggestionOnEnter": "off",
+    "html.suggest.ionic": false,
+    "html.suggest.angular1": false,
+    "emmet.showSuggestionsAsSnippets": false,
+    "php.suggest.basic": false,
+    "editor.wordBasedSuggestions": false,
+    "editor.quickSuggestions": {
+        "other": false,
+        "comments": false,
+        "strings": false
+    },
+    "editor.codeLens": false,
+}
