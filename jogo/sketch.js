@@ -74,13 +74,14 @@ function draw() {
         //desenhar a nave
         image(imagemNave, posicaoNave.x, posicaoNave.y);
 
-        verificaColisao();
+        verificaColisaoMisseis();
         movimentarAlien();
         desenhaAlien();
         desenhaMisseis();
         adicionarDisparosDosAliens();
         desenharLasers();
         atualizarLasers();
+        verificarColisoesLasers();
         fill(255);
         textSize(30);
         text("Pontuação: " + pontuacao, 10, 80);
@@ -93,7 +94,7 @@ function mousePressed() {
 
 }
 
-function verificaColisao() {
+function verificaColisaoMisseis() {
     //para cada missil dentro do jogo
     for (let posicao of posicoesMisseis) {
         //verficar a colisao com todos os aliens
@@ -103,11 +104,12 @@ function verificaColisao() {
             if (alienMorto(numeroFantasia) == false) {
                 let imagemAlien = imagensAlien[numeroFantasia];
                 //se o missil está para esquerda OU (||)  para direita OU  para baixo OU para cima
-                if ((posicao.x + imagemMissil.width < posicaoAlienDaLista.x ||
-                    posicao.x > posicaoAlienDaLista.x + imagemAlien.width ||
-                    posicao.y > posicaoAlienDaLista.y + imagemAlien.height ||
-                    posicao.y + imagemMissil.height < posicaoAlienDaLista.y) == false
-                ) {
+                // if ((posicao.x + imagemMissil.width < posicaoAlienDaLista.x ||
+                //     posicao.x > posicaoAlienDaLista.x + imagemAlien.width ||
+                //     posicao.y > posicaoAlienDaLista.y + imagemAlien.height ||
+                //     posicao.y + imagemMissil.height < posicaoAlienDaLista.y) == false
+                // ) 
+                if (colidiu(posicao,  imagemMissil.width,  imagemMissil.height, posicaoAlienDaLista, imagemAlien.width, imagemAlien.height)){
                     //o alien está morto
                     aliens[i] = -1;
                     pontuacao = pontuacao + 10;
@@ -192,6 +194,27 @@ function calcularPosicaoAlien(indiceAlien) {
     posicao.x = indiceAlien * 100 + deslocamentoAlien;
     posicao.y = 150;
     return posicao;
+}
+
+function verificarColisoesLasers() {
+    for (let i = lasers.length - 1; i >= 0; i--) {
+        if (colidiu(lasers[i], 10, 30, posicaoNave, 100, 100)) {
+            console.log("morto");
+        }
+    }
+}
+
+function colidiu(posicaoObjeto, larguraObjeto, alturaObjeto, posicaoOutro, larguraOutro, alturaOutro) {
+
+    if (posicaoObjeto.x > posicaoOutro.x + larguraOutro ||
+        posicaoObjeto.x + larguraObjeto < posicaoOutro.x ||
+        posicaoObjeto.y > posicaoOutro.y + alturaOutro ||
+        posicaoObjeto.y + alturaObjeto < posicaoOutro.y
+    ) {
+        return false;
+    }
+
+    return true;
 }
 
 function todoMundoMorto() {
