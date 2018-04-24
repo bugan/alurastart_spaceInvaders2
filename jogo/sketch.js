@@ -24,7 +24,7 @@ function preload() {
 
     trilhaSonora = loadSound("audio/Trilha.mp3");
     imagemNave = loadImage("imagens/Nave.png");
-   
+
     imagemMissil = loadImage("imagens/Missil.png");
 
     imagensAlien.push(loadImage("imagens/Alien1.png"));
@@ -37,7 +37,7 @@ function setup() {
     // criando um palco com 900 de largura e 600 de altura
     createCanvas(900, 600);
     posicaoNave = createVector(400, 500);
-    trilhaSonora.loop();
+    //trilhaSonora.loop();
 
     for (let i = 0; i < quantidadeAliens; i = i + 1) {
         //faça algo
@@ -51,20 +51,29 @@ function setup() {
 function draw() {
     // pintar o fundo do palco de cinza
     background(100);
-    movimentaMisseis();
-    //centralizando a posição da nave
-    posicaoNave.x = mouseX - imagemNave.width / 2;
-    //desenhar a nave
-    image(imagemNave, posicaoNave.x, posicaoNave.y);
+    if (todoMundoMorto()) {
+        fill(255);
+        textSize(30);
+        textAlign(CENTER, CENTER);
+        text("Parabéns", width/2, height/2);
+    } else {
 
-    verificaColisao();
+        movimentaMisseis();
+        //centralizando a posição da nave
+        posicaoNave.x = mouseX - imagemNave.width / 2;
+        //desenhar a nave
+        image(imagemNave, posicaoNave.x, posicaoNave.y);
 
-    movimentarAlien();
-    desenhaAlien();
-    desenhaMisseis();
-    fill(255);
-    textSize(30);
-    text("Pontuação: "+pontuacao, 10,80);
+        verificaColisao();
+
+        movimentarAlien();
+        desenhaAlien();
+        desenhaMisseis();
+        fill(255);
+        textSize(30);
+        text("Pontuação: " + pontuacao, 10, 80);
+    }
+
 }
 //quando o mouse for pressionado
 function mousePressed() {
@@ -76,16 +85,16 @@ function verificaColisao() {
     //para cada missil dentro do jogo
     for (let posicao of posicoesMisseis) {
         //verficar a colisao com todos os aliens
-        for(let i=0 ; i<quantidadeAliens ; i = i+1){
+        for (let i = 0; i < quantidadeAliens; i = i + 1) {
             let posicaoAlienDaLista = calcularPosicaoAlien(i);
             let numeroFantasia = aliens[i];
-            if(numeroFantasia != -1){
+            if (alienMorto(numeroFantasia) == false) {
                 let imagemAlien = imagensAlien[numeroFantasia];
                 //se o missil está para esquerda OU (||)  para direita OU  para baixo OU para cima
                 if ((posicao.x + imagemMissil.width < posicaoAlienDaLista.x ||
-                 posicao.x > posicaoAlienDaLista.x + imagemAlien.width ||
-                 posicao.y > posicaoAlienDaLista.y + imagemAlien.height ||
-                 posicao.y + imagemMissil.height < posicaoAlienDaLista.y) == false
+                    posicao.x > posicaoAlienDaLista.x + imagemAlien.width ||
+                    posicao.y > posicaoAlienDaLista.y + imagemAlien.height ||
+                    posicao.y + imagemMissil.height < posicaoAlienDaLista.y) == false
                 ) {
                     //o alien está morto
                     aliens[i] = -1;
@@ -100,7 +109,7 @@ function desenhaAlien() {
     for (let i = 0; i < quantidadeAliens; i = i + 1) {
         let numeroFantasia = aliens[i];
         //se o numero da fantasia for diferente(!=) de -1 
-        if(numeroFantasia != -1){
+        if (alienMorto(numeroFantasia) == false) {
             //desenha o alien
             let posicao = calcularPosicaoAlien(i);
             image(imagensAlien[numeroFantasia], posicao.x, posicao.y);
@@ -135,9 +144,22 @@ function movimentaMisseis() {
     }
 }
 
-function calcularPosicaoAlien(indiceAlien){
+function calcularPosicaoAlien(indiceAlien) {
     let posicao = createVector();
-    posicao.x = indiceAlien*100 + deslocamentoAlien;
+    posicao.x = indiceAlien * 100 + deslocamentoAlien;
     posicao.y = 150;
     return posicao;
+}
+
+function todoMundoMorto() {
+    for (let alien of aliens) {
+        if (!alienMorto(alien)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function alienMorto(fantasia) {
+    return fantasia == -1;
 }
