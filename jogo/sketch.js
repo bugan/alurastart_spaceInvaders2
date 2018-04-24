@@ -1,8 +1,14 @@
+const velocidadeLaser = 5;
+const velocidadeMissil = 5;
+const quantidadeAliens = 5;
+const chanceAtirar = 0.0025;
 let imagemNave;
 let imagemMissil;
+let imagemLaser;
 let imagensAlien = new Array();
 let posicoesMisseis = new Array();
 let aliens = new Array();
+let velocidadeAlien = 2;
 
 let posicaoNave;
 let deslocamentoAlien = 0;
@@ -10,12 +16,15 @@ let deslocamentoAlien = 0;
 let alienVivo = true;
 let estaTocando;
 
-let quantidadeAliens = 5;
-let velocidadeAlien = 2;
-let velocidadeMissil = 5;
+
+
 let pontuacao = 0;
 
 let trilhaSonora;
+
+let lasers = new Array();
+
+
 
 //preparando o ambiente de trabalho
 //carrengado as fantasias do nosso jogo
@@ -26,6 +35,7 @@ function preload() {
     imagemNave = loadImage("imagens/Nave.png");
 
     imagemMissil = loadImage("imagens/Missil.png");
+    imagemLaser = loadImage("imagens/Laser.png");
 
     imagensAlien.push(loadImage("imagens/Alien1.png"));
     imagensAlien.push(loadImage("imagens/Alien2.png"));
@@ -65,10 +75,12 @@ function draw() {
         image(imagemNave, posicaoNave.x, posicaoNave.y);
 
         verificaColisao();
-
         movimentarAlien();
         desenhaAlien();
         desenhaMisseis();
+        adicionarDisparosDosAliens();
+        desenharLasers();
+        atualizarLasers();
         fill(255);
         textSize(30);
         text("Pontuação: " + pontuacao, 10, 80);
@@ -125,6 +137,37 @@ function movimentarAlien() {
     let imagemUltimoAlien = imagensAlien[0];
     if (posicaoUltimoAlien.x + imagemUltimoAlien.width > 900 || posicaoPrimeiroAlien.x < 0) {
         velocidadeAlien = velocidadeAlien * -1;
+    }
+}
+
+function deveAtirar() {
+    return Math.random() < chanceAtirar;
+}
+
+function adicionarDisparosDosAliens() {
+    for (let i = 0; i < aliens.length; i++) {
+        if (alienMorto(aliens[i])) {
+            continue;
+        }
+
+        if (deveAtirar()) {
+            let posicao = calcularPosicaoAlien(i);
+            posicao.x += 50;
+            posicao.y += 50;
+            lasers.push(posicao);
+        }
+    }
+}
+
+function atualizarLasers() {
+    for (let i = lasers.length - 1; i >= 0; i--) {
+        lasers[i].y += velocidadeLaser;
+    }
+}
+
+function desenharLasers() {
+    for (let laser of lasers) {
+        image(imagemLaser, laser.x, laser.y);
     }
 }
 
