@@ -103,12 +103,6 @@ function verificaColisaoMisseis() {
             let numeroFantasia = aliens[i];
             if (alienMorto(numeroFantasia) == false) {
                 let imagemAlien = imagensAlien[numeroFantasia];
-                //se o missil está para esquerda OU (||)  para direita OU  para baixo OU para cima
-                // if ((posicao.x + imagemMissil.width < posicaoAlienDaLista.x ||
-                //     posicao.x > posicaoAlienDaLista.x + imagemAlien.width ||
-                //     posicao.y > posicaoAlienDaLista.y + imagemAlien.height ||
-                //     posicao.y + imagemMissil.height < posicaoAlienDaLista.y) == false
-                // ) 
                 if (colidiu(posicao,  imagemMissil.width,  imagemMissil.height, posicaoAlienDaLista, imagemAlien.width, imagemAlien.height)){
                     //o alien está morto
                     aliens[i] = -1;
