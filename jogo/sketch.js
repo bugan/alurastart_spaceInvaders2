@@ -1,44 +1,15 @@
-const velocidadeLaser = 5;
-const velocidadeMissil = 5;
-const quantidadeAliens = 5;
-const chanceAtirar = 0.0025;
-
 const cenas = {
     jogo: 0,
     gameOver: 1,
     vitoria: 2,
 }
 let cenaAtual = cenas.jogo;
-
-let imagemNave;
-let imagemMissil;
-let imagemLaser;
-let imagensAlien = new Array();
-let posicoesMisseis = new Array();
-let aliens = new Array();
-let velocidadeAlien = 2;
-
-let posicaoNave;
-let deslocamentoAlien = 0;
-
-let alienVivo = true;
-let estaTocando;
-
-
-
 let pontuacao = 0;
-
 let trilhaSonora;
-
-let lasers = new Array();
-
-
-
 //preparando o ambiente de trabalho
 //carrengado as fantasias do nosso jogo
 function preload() {
     // carregando imagens
-
     trilhaSonora = loadSound("audio/Trilha.mp3");
     imagemNave = loadImage("imagens/Nave.png");
 
@@ -84,11 +55,8 @@ function atualizarCenaJogo() {
         cenaAtual = cenas.vitoria;
     }
     movimentaMisseis();
-    //centralizando a posição da nave
-    posicaoNave.x = mouseX - imagemNave.width / 2;
-    //desenhar a nave
-    image(imagemNave, posicaoNave.x, posicaoNave.y);
-
+    atualizarNave();
+    desenharNave();
     verificaColisaoMisseis();
     movimentarAlien();
     desenhaAlien();
@@ -118,112 +86,7 @@ function atualizaCenaVitoria(){
 
 //quando o mouse for pressionado
 function mousePressed() {
-    posicoesMisseis.push(createVector(mouseX - imagemMissil.width / 2, posicaoNave.y));
-
-}
-
-function verificaColisaoMisseis() {
-    //para cada missil dentro do jogo
-    for (let posicao of posicoesMisseis) {
-        //verficar a colisao com todos os aliens
-        for (let i = 0; i < quantidadeAliens; i = i + 1) {
-            let posicaoAlienDaLista = calcularPosicaoAlien(i);
-            let numeroFantasia = aliens[i];
-            if (alienMorto(numeroFantasia) == false) {
-                let imagemAlien = imagensAlien[numeroFantasia];
-                if (colidiu(posicao,  imagemMissil.width,  imagemMissil.height, posicaoAlienDaLista, imagemAlien.width, imagemAlien.height)){
-                    //o alien está morto
-                    aliens[i] = -1;
-                    pontuacao = pontuacao + 10;
-                }
-            }
-        }
-    }
-}
-
-function desenhaAlien() {
-    for (let i = 0; i < quantidadeAliens; i = i + 1) {
-        let numeroFantasia = aliens[i];
-        //se o numero da fantasia for diferente(!=) de -1 
-        if (alienMorto(numeroFantasia) == false) {
-            //desenha o alien
-            let posicao = calcularPosicaoAlien(i);
-            image(imagensAlien[numeroFantasia], posicao.x, posicao.y);
-        }
-    }
-}
-
-
-function movimentarAlien() {
-    deslocamentoAlien = deslocamentoAlien + velocidadeAlien;
-    let posicaoUltimoAlien = calcularPosicaoAlien(quantidadeAliens - 1);
-    let posicaoPrimeiroAlien = calcularPosicaoAlien(0);
-    let imagemUltimoAlien = imagensAlien[0];
-    if (posicaoUltimoAlien.x + imagemUltimoAlien.width > 900 || posicaoPrimeiroAlien.x < 0) {
-        velocidadeAlien = velocidadeAlien * -1;
-    }
-}
-
-function deveAtirar() {
-    return Math.random() < chanceAtirar;
-}
-
-function adicionarDisparosDosAliens() {
-    for (let i = 0; i < aliens.length; i++) {
-        if (alienMorto(aliens[i])) {
-            continue;
-        }
-
-        if (deveAtirar()) {
-            let posicao = calcularPosicaoAlien(i);
-            posicao.x += 50;
-            posicao.y += 50;
-            lasers.push(posicao);
-        }
-    }
-}
-
-function atualizarLasers() {
-    for (let i = lasers.length - 1; i >= 0; i--) {
-        lasers[i].y += velocidadeLaser;
-    }
-}
-
-function desenharLasers() {
-    for (let laser of lasers) {
-        image(imagemLaser, laser.x, laser.y);
-    }
-}
-
-function desenhaMisseis() {
-
-    //para cada item da minha lista -> desenhar aquele ator
-    for (let posicao of posicoesMisseis) {
-        image(imagemMissil, posicao.x, posicao.y);
-    }
-
-}
-
-function movimentaMisseis() {
-    //para cada posicao dentro da lista de posições -> mover o míssil para cima
-    for (let posicao of posicoesMisseis) {
-        posicao.y = posicao.y - velocidadeMissil;
-    }
-}
-
-function calcularPosicaoAlien(indiceAlien) {
-    let posicao = createVector();
-    posicao.x = indiceAlien * 100 + deslocamentoAlien;
-    posicao.y = 150;
-    return posicao;
-}
-
-function verificarColisoesLasers() {
-    for (let i = lasers.length - 1; i >= 0; i--) {
-        if (colidiu(lasers[i], 10, 30, posicaoNave, 100, 100)) {
-            cenaAtual = cenas.gameOver;
-        }
-    }
+    atirar();
 }
 
 function colidiu(posicaoObjeto, larguraObjeto, alturaObjeto, posicaoOutro, larguraOutro, alturaOutro) {
@@ -235,19 +98,5 @@ function colidiu(posicaoObjeto, larguraObjeto, alturaObjeto, posicaoOutro, largu
     ) {
         return false;
     }
-
     return true;
-}
-
-function todoMundoMorto() {
-    for (let alien of aliens) {
-        if (!alienMorto(alien)) {
-            return false;
-        }
-    }
-    return true;
-}
-
-function alienMorto(fantasia) {
-    return fantasia == -1;
 }
