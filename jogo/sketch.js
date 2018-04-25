@@ -67,7 +67,7 @@ function atualizarCenaJogo() {
     verificarColisoesLasers();
     fill(255);
     textSize(30);
-    text("Pontuação: " + pontuacao, 10, 80);
+    text("Pontuação: " + pontuacao, 30, 80);
 }
 
 function atualizarCenaGameOver() {
@@ -86,7 +86,12 @@ function atualizaCenaVitoria(){
 
 //quando o mouse for pressionado
 function mousePressed() {
-    atirar();
+    if(cenaAtual != cenas.jogo){
+        reiniciar();
+    }else{
+        atirar();
+    }
+    
 }
 
 function colidiu(posicaoObjeto, larguraObjeto, alturaObjeto, posicaoOutro, larguraOutro, alturaOutro) {
@@ -99,4 +104,22 @@ function colidiu(posicaoObjeto, larguraObjeto, alturaObjeto, posicaoOutro, largu
         return false;
     }
     return true;
+}
+
+function estaForaDaTela(posicaoY) {
+    return posicaoY > height || posicaoY < 0;
+}
+
+function reiniciar() {
+
+    for (let i = 0; i < aliens.length; i++) {
+        let numeroFantasia = Math.floor(random(imagensAlien.length));
+        aliens[i] = numeroFantasia;
+    }
+
+     lasers = new Array();
+     posicoesMisseis = new Array();
+
+     pontuacao = 0;
+    cenaAtual = cenas.jogo;
 }

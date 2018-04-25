@@ -5,6 +5,9 @@ let lasers = new Array();
 function atualizarLasers() {
     for (let i = lasers.length - 1; i >= 0; i--) {
         lasers[i].y += velocidadeLaser;
+        if(estaForaDaTela(lasers[i].y)){
+            lasers.splice(i,1);
+        }
     }
 }
 

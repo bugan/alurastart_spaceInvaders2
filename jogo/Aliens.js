@@ -1,5 +1,5 @@
 const quantidadeAliens = 5;
-const chanceAtirar = 0.1;
+const chanceAtirar = 0.003;
 
 let imagensAlien = new Array();
 let aliens = new Array();
