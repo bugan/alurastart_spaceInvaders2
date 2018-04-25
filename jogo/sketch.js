@@ -2,6 +2,14 @@ const velocidadeLaser = 5;
 const velocidadeMissil = 5;
 const quantidadeAliens = 5;
 const chanceAtirar = 0.0025;
+
+const cenas = {
+    jogo: 0,
+    gameOver: 1,
+    vitoria: 2,
+}
+let cenaAtual = cenas.jogo;
+
 let imagemNave;
 let imagemMissil;
 let imagemLaser;
@@ -61,33 +69,53 @@ function setup() {
 function draw() {
     // pintar o fundo do palco de cinza
     background(100);
-    if (todoMundoMorto()) {
-        fill(255);
-        textSize(30);
-        textAlign(CENTER, CENTER);
-        text("Parabéns", width/2, height/2);
-    } else {
-
-        movimentaMisseis();
-        //centralizando a posição da nave
-        posicaoNave.x = mouseX - imagemNave.width / 2;
-        //desenhar a nave
-        image(imagemNave, posicaoNave.x, posicaoNave.y);
-
-        verificaColisaoMisseis();
-        movimentarAlien();
-        desenhaAlien();
-        desenhaMisseis();
-        adicionarDisparosDosAliens();
-        desenharLasers();
-        atualizarLasers();
-        verificarColisoesLasers();
-        fill(255);
-        textSize(30);
-        text("Pontuação: " + pontuacao, 10, 80);
+    if (cenaAtual == cenas.vitoria) {
+       atualizaCenaVitoria();
+    } else if(cenaAtual == cenas.jogo){
+       atualizarCenaJogo();
+    }else if(cenaAtual == cenas.gameOver){
+       atualizarCenaGameOver();
     }
 
 }
+
+function atualizarCenaJogo() {
+    if(todoMundoMorto()){
+        cenaAtual = cenas.vitoria;
+    }
+    movimentaMisseis();
+    //centralizando a posição da nave
+    posicaoNave.x = mouseX - imagemNave.width / 2;
+    //desenhar a nave
+    image(imagemNave, posicaoNave.x, posicaoNave.y);
+
+    verificaColisaoMisseis();
+    movimentarAlien();
+    desenhaAlien();
+    desenhaMisseis();
+    adicionarDisparosDosAliens();
+    desenharLasers();
+    atualizarLasers();
+    verificarColisoesLasers();
+    fill(255);
+    textSize(30);
+    text("Pontuação: " + pontuacao, 10, 80);
+}
+
+function atualizarCenaGameOver() {
+    fill(255);
+    textSize(80);
+    textAlign(CENTER, CENTER);
+    text("Game Over", width/2, height/2);
+}
+
+function atualizaCenaVitoria(){
+    fill(255);
+    textSize(80);
+    textAlign(CENTER, CENTER);
+    text("Parabéns", width/2, height/2);
+}
+
 //quando o mouse for pressionado
 function mousePressed() {
     posicoesMisseis.push(createVector(mouseX - imagemMissil.width / 2, posicaoNave.y));
@@ -193,7 +221,7 @@ function calcularPosicaoAlien(indiceAlien) {
 function verificarColisoesLasers() {
     for (let i = lasers.length - 1; i >= 0; i--) {
         if (colidiu(lasers[i], 10, 30, posicaoNave, 100, 100)) {
-            console.log("morto");
+            cenaAtual = cenas.gameOver;
         }
     }
 }
