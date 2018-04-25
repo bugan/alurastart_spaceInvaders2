@@ -5,6 +5,9 @@ const cenas = {
 }
 let cenaAtual = cenas.jogo;
 let pontuacao = 0;
+let deltaTime = 0;
+let ultimoFrame = 0;
+
 let trilhaSonora;
 //preparando o ambiente de trabalho
 //carrengado as fantasias do nosso jogo
@@ -38,6 +41,8 @@ function setup() {
 
 //desenhando nosso atores - igual ao bloco "sempre" do scracth
 function draw() {
+    calcularDeltaTime();
+    
     // pintar o fundo do palco de cinza
     background(100);
     if (cenaAtual == cenas.vitoria) {
@@ -93,6 +98,12 @@ function mousePressed() {
         atirar();
     }
     
+}
+
+function calcularDeltaTime() {
+    let frameAtual = millis() / 1000;
+    deltaTime = frameAtual - ultimoFrame;
+    ultimoFrame = frameAtual;
 }
 
 function colidiu(posicaoObjeto, larguraObjeto, alturaObjeto, posicaoOutro, larguraOutro, alturaOutro) {
