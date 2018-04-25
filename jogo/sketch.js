@@ -67,13 +67,14 @@ function atualizarCenaJogo() {
     verificarColisoesLasers();
     fill(255);
     textSize(30);
+    textAlign(LEFT);
     text("Pontuação: " + pontuacao, 30, 80);
 }
 
 function atualizarCenaGameOver() {
     fill(255);
     textSize(80);
-    textAlign(CENTER, CENTER);
+    textAlign(CENTER);
     text("Game Over", width/2, height/2);
 }
 
